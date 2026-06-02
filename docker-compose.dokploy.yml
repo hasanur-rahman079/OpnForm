@@ -1,11 +1,19 @@
 ---
 # Dokploy-compatible Docker Compose file for OpnForm
 #
+# Uses pre-built images from Docker Hub (exomeit/opnform-api, exomeit/opnform-client).
+# No build step on the VPS — images are built on a machine with 12GB+ RAM.
+#
 # Usage with Dokploy:
 #   1. Run: bash scripts/generate-dokploy-secrets.sh
 #   2. Copy the output into Dokploy's Environment tab
 #   3. Also set APP_URL and DB_PASSWORD in the Environment tab
 #   4. Deploy
+#
+# To build images locally (requires 12GB+ RAM):
+#   docker compose -f docker-compose.dokploy.yml build
+#   docker tag opnform-api exomeit/opnform-api:latest && docker push exomeit/opnform-api:latest
+#   docker tag opnform-ui exomeit/opnform-client:latest && docker push exomeit/opnform-client:latest
 #
 # No .env files, no YAML anchors, no bind-mount configs.
 # Everything goes through Dokploy's environment variable tab.
@@ -43,12 +51,10 @@ services:
   # API (Laravel PHP-FPM)
   # -------------------------------------------------------------------
   api:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.api
-    # To use a pre-built image instead, comment the `build:` lines above
-    # and uncomment the `image:` line below:
-    # image: jhumanj/opnform-api:latest
+    # build:                           # Build on VPS disabled — use pre-built image
+    #   context: .
+    #   dockerfile: docker/Dockerfile.api
+    image: exomeit/opnform-api:latest
     container_name: opnform-api
     volumes:
       - opnform_storage:/usr/share/nginx/html/storage:rw
@@ -150,10 +156,10 @@ services:
   # Queue Worker (same image as api, different command)
   # -------------------------------------------------------------------
   api-worker:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.api
-    # image: jhumanj/opnform-api:latest
+    # build:
+    #   context: .
+    #   dockerfile: docker/Dockerfile.api
+    image: exomeit/opnform-api:latest
     container_name: opnform-api-worker
     command: ["php", "artisan", "queue:work"]
     volumes:
@@ -255,10 +261,10 @@ services:
   # Scheduler (same image as api, different command)
   # -------------------------------------------------------------------
   api-scheduler:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.api
-    # image: jhumanj/opnform-api:latest
+    # build:
+    #   context: .
+    #   dockerfile: docker/Dockerfile.api
+    image: exomeit/opnform-api:latest
     container_name: opnform-api-scheduler
     command: ["php", "artisan", "schedule:work"]
     volumes:
@@ -363,13 +369,12 @@ services:
   # UI (Nuxt 3 SSR Frontend)
   # -------------------------------------------------------------------
   ui:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.client
-      args:
-        NODE_MEMORY: ${NODE_MEMORY:-8192}
-    # To use a pre-built image instead:
-    # image: jhumanj/opnform-client:latest
+    # build:                           # Build on VPS disabled — use pre-built image
+    #   context: .
+    #   dockerfile: docker/Dockerfile.client
+    #   args:
+    #     NODE_MEMORY: ${NODE_MEMORY:-8192}
+    image: exomeit/opnform-client:latest
     container_name: opnform-client
     environment:
       NUXT_PUBLIC_APP_URL: ${NUXT_PUBLIC_APP_URL:-/}
