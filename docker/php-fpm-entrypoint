@@ -20,12 +20,12 @@ main() {
     echo "Determined role: $ROLE for command: $COMMAND_AS_STRING"
 
     apply_php_configuration
-    prep_file_permissions 
-    prep_storage          
-    wait_for_db           
+    prep_file_permissions
+    wait_for_db
 
     if [ "$ROLE" = "api" ]; then
         echo "Running setup for API role..."
+        prep_storage
         apply_db_migrations
         initialize_instance
         optimize_application
