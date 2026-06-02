@@ -367,7 +367,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile.client
       args:
-        NODE_MEMORY: ${NODE_MEMORY:-4096}
+        NODE_MEMORY: ${NODE_MEMORY:-8192}
     # To use a pre-built image instead:
     # image: jhumanj/opnform-client:latest
     container_name: opnform-client

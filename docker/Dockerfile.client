@@ -1,7 +1,7 @@
 FROM node:24-alpine AS javascript-builder
 WORKDIR /app
 
-ARG NODE_MEMORY=4096
+ARG NODE_MEMORY=8192
 
 ADD ./client/package.json ./client/package-lock.json ./
 
