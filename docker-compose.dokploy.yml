@@ -16,7 +16,9 @@
 #   docker tag opnform-ui exomeit/opnform-client:latest && docker push exomeit/opnform-client:latest
 #
 # No .env files, no YAML anchors, no bind-mount configs.
-# Everything goes through Dokploy's environment variable tab.
+# No host ports are bound. Dokploy's built-in Traefik handles routing.
+# In Dokploy's Domain tab, point your domain to: ingress / port 80
+# Everything else goes through Dokploy's environment variable tab.
 
 services:
   db:
@@ -417,8 +419,8 @@ services:
     # To use the standard nginx image with a bind-mount instead:
     # image: nginx:1
     container_name: opnform-ingress
-    ports:
-      - ${APP_PORT:-80}:80
+    # No host port binding — Dokploy's built-in Traefik routes domains directly here.
+    # In Dokploy's Domain tab, point your domain to: ingress / port 80
     environment:
       NGINX_MAX_BODY_SIZE: ${NGINX_MAX_BODY_SIZE:-64m}
     depends_on:

@@ -86,7 +86,10 @@ Edit `docker-compose.dokploy.yml`. For each service, comment out `build:` and un
    - `APP_KEY`, `JWT_SECRET`, `FRONT_API_SECRET`, `NUXT_API_SECRET` (from step 1)
    - `APP_URL=https://your-domain.com`
    - `DB_PASSWORD=<strong-password>`
-3. Deploy — Dokploy pulls images and starts containers (no build)
+3. In Dokploy's **Domain** tab, add your domain pointing to `ingress` port `80`
+   - Dokploy's built-in Traefik handles SSL and routes traffic internally
+   - No host port binding needed — no port conflicts with other apps
+4. Deploy — Dokploy pulls images and starts containers (no build)
 
 ## Runtime resources (on VPS)
 
