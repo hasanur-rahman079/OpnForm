@@ -34,7 +34,7 @@ services:
     volumes:
       - redis-data:/data
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      test: ["CMD-SHELL", "redis-cli ${REDIS_PASSWORD:+-a ${REDIS_PASSWORD}} ping | grep PONG"]
       interval: 30s
       timeout: 5s
     restart: unless-stopped
@@ -62,7 +62,7 @@ services:
       APP_ENV: ${APP_ENV:-production}
       APP_DEBUG: ${APP_DEBUG:-false}
       APP_URL: ${APP_URL:-http://localhost}
-      FRONT_URL: ${FRONT_URL:-${APP_URL:-http://localhost}}
+      FRONT_URL: ${FRONT_URL:-http://localhost}
       LOG_CHANNEL: ${LOG_CHANNEL:-errorlog}
       LOG_LEVEL: ${LOG_LEVEL:-debug}
       # ---- Database ----
@@ -168,7 +168,7 @@ services:
       APP_ENV: ${APP_ENV:-production}
       APP_DEBUG: ${APP_DEBUG:-false}
       APP_URL: ${APP_URL:-http://localhost}
-      FRONT_URL: ${FRONT_URL:-${APP_URL:-http://localhost}}
+      FRONT_URL: ${FRONT_URL:-http://localhost}
       LOG_CHANNEL: ${LOG_CHANNEL:-errorlog}
       LOG_LEVEL: ${LOG_LEVEL:-debug}
       # ---- Database ----
@@ -273,7 +273,7 @@ services:
       APP_ENV: ${APP_ENV:-production}
       APP_DEBUG: ${APP_DEBUG:-false}
       APP_URL: ${APP_URL:-http://localhost}
-      FRONT_URL: ${FRONT_URL:-${APP_URL:-http://localhost}}
+      FRONT_URL: ${FRONT_URL:-http://localhost}
       LOG_CHANNEL: ${LOG_CHANNEL:-errorlog}
       LOG_LEVEL: ${LOG_LEVEL:-debug}
       # ---- Database ----
