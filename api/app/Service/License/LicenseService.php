@@ -25,7 +25,7 @@ class LicenseService
     {
         $licenseKey = $this->getLicenseKey();
         if (!$licenseKey) {
-            return LicenseCheckResult::invalid();
+            return LicenseCheckResult::builtInEnterprise();
         }
 
         $cached = Cache::get(self::CACHE_KEY);

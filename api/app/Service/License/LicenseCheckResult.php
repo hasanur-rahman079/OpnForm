@@ -40,4 +40,22 @@ class LicenseCheckResult
             expiresAt: null,
         );
     }
+
+    public static function builtInEnterprise(): self
+    {
+        return new self(
+            status: 'active',
+            features: [
+                'sso' => true,
+                'multiOrg' => true,
+                'whitelabel' => true,
+                'custom_smtp' => true,
+                'audit_logs' => true,
+                'external_storage' => true,
+                'custom_code' => true,
+            ],
+            lastChecked: now(),
+            expiresAt: null,
+        );
+    }
 }
