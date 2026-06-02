@@ -1,43 +1,29 @@
 FROM node:24-alpine AS javascript-builder
 WORKDIR /app
 
-# It's best to add as few files as possible before running the build commands
-# as they will be re-run everytime one of those files changes.
-#
-# It's possible to run npm install with only the package.json and package-lock.json file.
+ARG NODE_MEMORY=4096
 
 ADD ./client/package.json ./client/package-lock.json ./
 
-# Install git and other necessary build tools
 RUN apk add --no-cache git
 
-# Clear npm cache, remove existing node_modules, and install dependencies
 RUN npm cache clean --force && \
     rm -rf node_modules && \
     npm ci
 
-# Clean up after npm install to free memory
 RUN npm cache clean --force
-
-# Explicitly install the correct version of esbuild
-# RUN npm install esbuild@0.21.5
 
 ADD ./client/ /app/
 
-ENV NODE_OPTIONS="--max-old-space-size=6144"
-# Set production mode to reduce memory usage
+ENV NODE_OPTIONS="--max-old-space-size=${NODE_MEMORY}"
 ENV NODE_ENV=production
-# Disable source maps to reduce memory usage
-ENV GENERATE_SOURCEMAP=false
-# Additional memory optimizations
 ENV NUXT_TELEMETRY_DISABLED=1
-# Optimize Vite build for memory
-ENV VITE_NODE_OPTIONS="--max-old-space-size=10240"
-# Run the build with additional memory optimizations and limited concurrency
+
+# Bypass package.json "build" script — it overrides NODE_OPTIONS with 8192.
+# Call nuxt build directly so our memory limit takes effect.
 RUN --mount=type=tmpfs,target=/tmp \
-    NODE_OPTIONS="--max-old-space-size=10240" \
     NUXT_BUILD_CONCURRENCY=1 \
-    npm run build
+    npx nuxt build
 
 FROM node:24-alpine
 WORKDIR /app

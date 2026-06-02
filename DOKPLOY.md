@@ -7,6 +7,8 @@ This guide covers deploying OpnForm using [Dokploy](https://dokploy.com), a self
 - A Dokploy instance with a server connected
 - A domain name pointing to your server (for production)
 - Git repository access (your OpnForm fork)
+- **At least 4GB RAM + 4GB swap** on the build server (Nuxt SSR build is memory-intensive)
+  - If your server has less RAM, see [Building on a Separate Machine](#building-on-a-separate-machine) below
 
 ## Quick Start
 
@@ -243,3 +245,22 @@ Check that `NUXT_PRIVATE_API_BASE` is set to `http://ingress/api` (the default).
 ### Custom domain SSL
 
 OpnForm supports custom domains for forms. This requires configuring a Caddy reverse proxy in front of the ingress. See the main deployment documentation for Caddy setup instructions.
+
+### Build fails with SIGKILL / OOM (Out of Memory)
+
+The Nuxt SSR build is memory-intensive — the server-side bundling can consume 4-8GB. If the build is killed mid-way:
+
+**Option 1 — Add swap space on your server:**
+```bash
+fallocate -l 8G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+echo '/swapfile none swap sw 0 0' >> /etc/fstab
+```
+
+**Option 2 — Adjust the Node memory limit:**
+Set `NODE_MEMORY` in Dokploy's Environment tab (default: `4096` MB). Try `2048` for a 2GB server, `4096` for a 4GB server.
+
+**Option 3 — Pre-build images on a machine with more RAM:**
+Build and push images from a machine with 8GB+ RAM, then switch the compose file to use `image:` instead of `build:`. See the "Using Pre-Built Images" section above.
